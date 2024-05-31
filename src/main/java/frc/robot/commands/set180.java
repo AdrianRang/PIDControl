@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Motor;
+import frc.robot.subsystems.Motor.Motor;
 
 public class set180 extends Command {
   private final Motor m_motor;
@@ -13,6 +13,8 @@ public class set180 extends Command {
   /** Creates a new set180. */
   public set180(Motor m_motor) {
     this.m_motor = m_motor;
+
+    addRequirements(m_motor);
   }
 
   // Called when the command is initially scheduled.

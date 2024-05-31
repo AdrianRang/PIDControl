@@ -5,6 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Set0;
+import frc.robot.commands.supplierSet;
+import frc.robot.subsystems.Motor.Motor;
+import frc.robot.subsystems.Motor.SparkPID;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -17,6 +22,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  Motor m_motor = new Motor(new SparkPID(0));
+  
+  AnalogPotentiometer m_potentiometer = new AnalogPotentiometer(0, 5);
+  AnalogPotentiometer m_potentiometer2 = new AnalogPotentiometer(1, 5);
+  AnalogPotentiometer m_potentiometer3 = new AnalogPotentiometer(2, 5);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -38,10 +48,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
+    this.m_motor.setDefaultCommand(new supplierSet(m_motor, () -> (Math.atan2(m_driverController.getLeftY(), m_driverController.getLeftX()))));
+    m_driverController.a().whileFalse(new Set0(m_motor));
+    this.m_motor.setPID(m_potentiometer.get(), m_potentiometer2.get(), m_potentiometer3.get());
   }
 
   /**

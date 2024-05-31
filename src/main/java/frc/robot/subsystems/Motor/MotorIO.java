@@ -1,6 +1,8 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Motor;
 
-public interface Motor {
+public interface MotorIO {
+
+
     public void setSpeed(double speed);
     public double getPosition();
     public void setMotorPosition(double position);
@@ -10,4 +12,11 @@ public interface Motor {
     public void setP(double p);
     public void setI(double i);
     public void setD(double d);
+
+    public double getSpeed();
+    public double getP();
+    public double getI();
+    public double getD();
+
+    default void periodic(){};
 }

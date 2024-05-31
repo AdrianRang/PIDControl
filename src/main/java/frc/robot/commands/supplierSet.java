@@ -4,28 +4,31 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Motor.Motor;
 
-public class Set0 extends Command {
-  private final Motor m_motor;
-  /** Creates a new Set0. */
-  public Set0(Motor m_motor) {
+public class supplierSet extends Command {
+  Motor m_motor;
+  Supplier<Double> m_angleSupplier;
+  /** Creates a new supplierSet. */
+  public supplierSet(Motor m_motor, Supplier<Double> angleSupplier) {
     this.m_motor = m_motor;
+    m_angleSupplier = angleSupplier;
 
     addRequirements(m_motor);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_motor.setMotorPosition(0);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_motor.setMotorPosition(m_angleSupplier.get());
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -34,6 +37,6 @@ public class Set0 extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(m_motor.getPosition()) < Constants.MotorConstants.setPointEpsilon;
+    return false;
   }
 }

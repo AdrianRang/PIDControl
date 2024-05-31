@@ -2,31 +2,33 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Motor;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 
-public class SparkPID extends SubsystemBase implements Motor {
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class WPIPID extends SubsystemBase implements MotorIO{
   private final CANSparkMax m_motor;
   private final RelativeEncoder m_encoder;
-  private final SparkPIDController m_pidController;
+  private final PIDController m_pidController;
 
-  /** Creates a new Motor. */
-  public SparkPID(int motorCANID) {
+  /** Creates a new WPIPID. */
+  public WPIPID(int motorCANID, double kP, double kI, double kD) {
     m_motor = new CANSparkMax(0, CANSparkMax.MotorType.kBrushless);
     m_encoder = m_motor.getEncoder();
-    m_pidController = m_motor.getPIDController();
+    m_pidController = new PIDController(kP, kI, kD);
 
     m_encoder.setPositionConversionFactor(Math.PI * 2.0 / 42.0);
-    m_pidController.setPositionPIDWrappingEnabled(false); // If the encoder where absolute, this would be true
+    m_pidController.setTolerance(0.1);
+    m_pidController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
-  public void periodic() {  
-    // This method will be called once per scheduler run
+  public void periodic() {
+    m_motor.set(m_pidController.calculate(m_encoder.getPosition()));
   }
 
   public void setSpeed(double speed) {
@@ -38,7 +40,8 @@ public class SparkPID extends SubsystemBase implements Motor {
   }
 
   public void setMotorPosition(double position) {
-    m_pidController.setReference(position, CANSparkMax.ControlType.kPosition);
+    m_pidController.setSetpoint(position);
+    m_motor.set(m_pidController.calculate(m_encoder.getPosition()));
   }
 
   public void stop(){
@@ -61,5 +64,21 @@ public class SparkPID extends SubsystemBase implements Motor {
 
   public void setD(double d) {
     m_pidController.setD(d);
+  }
+
+  public double getSpeed() {
+    return m_motor.get();
+  }
+
+  public double getP(){
+    return m_pidController.getP();
+  }
+
+  public double getI(){
+    return m_pidController.getI();
+  }
+
+  public double getD(){
+    return m_pidController.getD();
   }
 }
